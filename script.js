@@ -12,18 +12,18 @@ request.onupgradeneeded = function (event) {//evento de atualizar versões (onup
     store.createIndex("cargo",{unique:false});
 };
 
-request.onsuccess = function (event) {
+request.onsuccess = function (event) {//evento executado quando a operação foi concluida  com sucesso.
     console.log("Banco de dados carregado com sucesso!");
     listarFuncionarios(); // Garante que os dados sejam carregados ao iniciar
 };
 
-request.onerror = function (event) {
+request.onerror = function (event) {//evento executado quando houve erro na operação.
     console.error("Erro ao abrir o IndexedDB:", event.target.error);
 };
 
 // Função auxiliar para verificar se o banco de dados foi carregado corretamente
 function verificarDB() {
-    if (!request.result) {
+    if (!request.result) {//verifica se o banco esta disponívelcaso não esteja retorna null
         console.error("O banco de dados não foi carregado corretamente.");
         return null;
     }
@@ -33,13 +33,13 @@ function verificarDB() {
 // Captura o evento de envio do formulário
 document.querySelector(".add_names").addEventListener("submit", function (event) {
     event.preventDefault();
-    let funcionario = {
-        nome: document.getElementById("nome").value,
-        cpf: document.getElementById("cpf").value,
-        email: document.getElementById("email").value,
-        telefone: document.getElementById("telefone").value,
-        data_nascimento: document.getElementById("data_nascimento").value,
-        cargo: document.getElementById("cargo").value
+    let funcionario = {//criando objeto funcionário, as palavras seguidas de dois pontos são atributos.
+        nome: document.querySelector("#nome").value,
+        cpf: document.querySelector("#cpf").value,
+        email: document.querySelector("#email").value,
+        telefone: document.querySelector("#telefone").value,
+        data_nascimento: document.querySelector("#data_nascimento").value,
+        cargo: document.querySelector("#cargo").value
     };
 
     adicionarFuncionario(funcionario);
@@ -52,25 +52,27 @@ function listarFuncionarios() {
         return;
     }
 
-    let transaction = db.transaction("funcionarios", "readonly");
+    let transaction = db.transaction("funcionarios", "readonly");//faz leitura do banco de funcionarios
     let store = transaction.objectStore("funcionarios");
 
-    let listaFuncionarios = document.querySelector(".your_dates");
+    let listaFuncionarios = document.querySelector(".your_dates");//exibir lista de funcionario no html
     listaFuncionarios.innerHTML = ""; // Limpa antes de exibir
     
-    let cursorRequest = store.openCursor();
-    cursorRequest.onsuccess = function (event) {
-        let cursor = event.target.result;
-        if (cursor) {
-            let funcionario = cursor.value;
-            listaFuncionarios.innerHTML += `<p>ID: ${funcionario.id} - Nome: ${funcionario.nome} - CPF: ${funcionario.cpf}</p>`;
+    let cursorRequest = store.openCursor();//jeito que o indexedDB usa para percorrer todos os registros dentro da Store
+    cursorRequest.onsuccess = function (event) {//lista executada com sucesso
+        let cursor = event.target.result;//cursor aponta para cada registro
+        if (cursor) {//se o registro existir
+            let funcionario = cursor.value;//o cursor busca as informações(valores) dos funcionarios
+            listaFuncionarios.innerHTML += `<p>ID: ${funcionario.id} - Nome: ${funcionario.nome} - CPF: ${funcionario.cpf} -
+            E-mail: ${funcionario.email} - Cargo: ${funcionario.cargo} - telefone: ${funcionario.telefone}- nascimento:${funcionario.data_nascimento}</p>`;
+            
             cursor.continue();
         } else {
             mostrarFeedback("Lista de funcionários carregada com sucesso!", "success");
         }
     };
 
-    cursorRequest.onerror = function (event) {
+    cursorRequest.onerror = function (event) {//erro ao listar funcionarios
         console.error("Erro ao listar funcionários:", event.target.error);
         mostrarFeedback("Erro ao listar funcionários!", "error");
     };
@@ -79,20 +81,20 @@ function listarFuncionarios() {
 
 // Função para adicionar um funcionário com feedback visual
 function adicionarFuncionario(funcionario) {
-    let db = verificarDB();
-    if (!db) return;
+    let db = verificarDB();//led db chama função verificar banco de dados
+    if (!db) return;//se estiver vazio sai da função
 
-    let transaction = db.transaction("funcionarios", "readwrite");
-    let store = transaction.objectStore("funcionarios");
+    let transaction = db.transaction("funcionarios", "readwrite");//cria uma transação entre objeto e funcionario o readwrite permite gerir(crud: inserir,ler,atualizar,deletar) os dados
+    let store = transaction.objectStore("funcionarios");//referencia direta aonde os dados serão armazenados
     
-    let addRequest = store.add(funcionario);
-    addRequest.onsuccess = function () {
+    let addRequest = store.add(funcionario);//adicionar funcionario na store(lista)
+    addRequest.onsuccess = function () {//funcionario adicionado com sucesso
         console.log("Funcionário adicionado com sucesso!");
         mostrarFeedback("Funcionário cadastrado com sucesso!", "success"); // Mostra feedback visual
-        listarFuncionarios();
+        listarFuncionarios();//executa a função listar funcionario
     };
 
-    addRequest.onerror = function (event) {
+    addRequest.onerror = function (event) {//funcionario não foi adicionado
         console.error("Erro ao adicionar funcionário:", event.target.error);
         mostrarFeedback("Erro ao cadastrar funcionário!", "error"); // Exibe erro na interface
     };
@@ -158,7 +160,7 @@ function deletarFuncionario(id) {
 
 // Mostrar feedback
 function mostrarFeedback(mensagem, tipo) {
-    let feedback = document.getElementById("feedback-msg");
+    let feedback = document.querySelector_("feedback-msg");
     feedback.textContent = mensagem;
     feedback.className = `feedback ${tipo}`; // Aplica classe de sucesso ou erro
     feedback.style.display = "block";
