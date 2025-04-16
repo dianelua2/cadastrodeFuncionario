@@ -20,7 +20,7 @@ button{
     width: 12vw;
     height: 10vh;
     font-weight: bold;
-    border: 1.5px solid #000;   
+    border: 1.5px solid #0c0b0f;   
 }
 input{
     width: 60vw;
@@ -46,7 +46,7 @@ section{
     height: 7vh;
     color: #fff;
     font-weight: bold;
-    border: 1.5px solid #000;
+    border: 1.5px solid #070bee;
 }
 .impossible{
     display: none;
